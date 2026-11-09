@@ -1,0 +1,18 @@
+package: community.lazycat.app.airtrail
+name: AirTrail
+version: 3.14.0
+description: "Personal flight tracking platform."
+min_os_version: "1.5.0"
+homepage: https://airtrail.johan.ohly.dk
+author: johanohly
+license: "GPL-3.0"
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: AirTrail 航迹记录
+    description: "个人飞行记录追踪平台，支持多用户、航班共享与地图展示。"
+  en:
+    name: AirTrail
+    description: "Personal flight tracking platform."

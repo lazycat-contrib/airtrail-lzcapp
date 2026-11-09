@@ -1,0 +1,16 @@
+params:
+  - id: at_pg_pass_8f2k
+    type: secret
+    name: "数据库密码"
+    description: "PostgreSQL 数据库密码（已预置随机值，应用自动使用）"
+    default_value: "{{SECRET_dy65y6ct}}"
+    optional: false
+locales:
+  zh:
+    at_pg_pass_8f2k:
+      name: "数据库密码"
+      description: "PostgreSQL 数据库密码（已预置随机值，应用自动使用）"
+  en:
+    at_pg_pass_8f2k:
+      name: "Database password"
+      description: "Auto-generated random value, used by the app automatically."

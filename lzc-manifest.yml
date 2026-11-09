@@ -1,0 +1,56 @@
+application:
+  subdomain: airtrail
+  multi_instance: false
+  # First visit redirects to /setup where the first owner account is created
+  # (local username+password form, src/routes/api/users/setup) -> public_path.
+  public_path:
+    - /
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://airtrail:3000/
+services:
+  airtrail:
+    # upstream: johly/airtrail:v3.14.0
+    image: docker.1ms.run/johly/airtrail:v3.14.0
+    environment:
+      - ORIGIN=https://{{.S.AppDomain}}
+      - BODY_SIZE_LIMIT=20M
+      - UPLOAD_LOCATION=/app/uploads
+      - DB_URL=postgres://airtrail:{{ .U.at_pg_pass_8f2k }}@db:5432/airtrail
+      - DB_DATABASE_NAME=airtrail
+      - DB_USERNAME=airtrail
+      - DB_PASSWORD={{ .U.at_pg_pass_8f2k }}
+      - TZ=Asia/Shanghai
+    depends_on:
+      - db
+    binds:
+      - /lzcapp/var/mutdata/uploads:/app/uploads
+  db:
+    # upstream: library/postgres:16-alpine
+    image: docker.1ms.run/library/postgres:16.15
+    environment:
+      - POSTGRES_DB=airtrail
+      - POSTGRES_USER=airtrail
+      - POSTGRES_PASSWORD={{ .U.at_pg_pass_8f2k }}
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/mutdata/pgdata:/var/lib/postgresql/data
+usage: |
+  AirTrail 是开源个人飞行记录追踪平台（GPL-3.0），支持多用户、航班共享、
+  地图可视化与飞行统计，可接入 OAuth 登录。
+
+  使用方法：
+  1. 部署后首次打开会跳转到 /setup 页面，用用户名+密码自助创建第一个
+     Owner 账号（本地表单，无邮件验证），创建后即登录。
+  2. 之后可在设置里用「Add user」直接添加更多本地用户（用户名+密码，
+     无需邮件）。
+  3. 地图底图与航班查询等外部集成默认使用内置免费源；AeroDataBox 等
+     付费数据源需自行在设置里填 key。
+
+  说明：
+  - 首个账号走应用自身 /setup 自助建号，因此开放 public_path，由应用
+    自身登录页鉴权；数据库密码为部署系统预置随机值。
+  - 本包未做实机验证，功能以官方文档为准：https://airtrail.johan.ohly.dk
+  - 许可证 GPL-3.0，随包分发，见 /package-licenses/。
